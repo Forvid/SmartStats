@@ -1,0 +1,7 @@
+<resources>
+    <declare-styleable name="StatsView">
+        <attr name="lineWidth" format="dimension"/>
+        <attr name="fontSize"  format="dimension"/>
+        <attr name="colors"    format="reference"/>
+    </declare-styleable>
+</resources>
