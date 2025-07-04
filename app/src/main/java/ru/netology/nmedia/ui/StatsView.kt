@@ -28,17 +28,18 @@ class StatsView @JvmOverloads constructor(
             fontSize  = getDimension(R.styleable.StatsView_fontSize,  fontSize)
             val arrayId = getResourceId(R.styleable.StatsView_colors, 0)
             if (arrayId != 0) {
-                val tmp = resources.getIntArray(arrayId)
-                colors = tmp.toList()
+                colors = resources.getIntArray(arrayId).toList()
             }
         }
     }
 
+    // Paint для рисования дуг
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style       = Paint.Style.STROKE
         strokeWidth = lineWidth
-        strokeCap   = Paint.Cap.ROUND
+        strokeCap   = Paint.Cap.BUTT
     }
+    // Paint для текста в центре
     private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style     = Paint.Style.FILL
         textAlign = Paint.Align.CENTER
@@ -53,6 +54,7 @@ class StatsView @JvmOverloads constructor(
         }
 
     private var normalized = emptyList<Float>()
+
     private var radius = 0f
     private lateinit var center: PointF
     private lateinit var oval: RectF
@@ -77,9 +79,14 @@ class StatsView @JvmOverloads constructor(
             startAngle += sweep
         }
 
-        // Надпись с суммарным %
+        // Надпись с суммарным процентом
         val percent = "%.2f%%".format(normalized.sum() * 100)
-        canvas.drawText(percent, center.x, center.y + textPaint.textSize / 4f, textPaint)
+        canvas.drawText(
+            percent,
+            center.x,
+            center.y + textPaint.textSize / 4f,
+            textPaint
+        )
     }
 
     private fun normalizeData() {
@@ -87,6 +94,6 @@ class StatsView @JvmOverloads constructor(
         normalized = data.map { it / total }
     }
 
-    private fun randomColor() =
+    private fun randomColor(): Int =
         Random.nextInt(0xFF000000.toInt(), 0xFFFFFFFF.toInt())
 }
