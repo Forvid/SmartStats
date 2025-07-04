@@ -37,7 +37,7 @@ class StatsView @JvmOverloads constructor(
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style       = Paint.Style.STROKE
         strokeWidth = lineWidth
-        strokeCap   = Paint.Cap.BUTT
+        strokeCap   = Paint.Cap.ROUND
     }
     // Paint для текста в центре
     private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
