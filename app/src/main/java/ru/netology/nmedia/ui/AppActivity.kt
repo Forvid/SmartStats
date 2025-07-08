@@ -1,7 +1,6 @@
 package ru.netology.nmedia.ui
 
 import android.os.Bundle
-import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import ru.netology.nmedia.R
 
@@ -14,8 +13,7 @@ class AppActivity : AppCompatActivity(R.layout.activity_app) {
             data = listOf(500f, 300f, 200f, 100f)
         }
 
-        val anim = AnimationUtils.loadAnimation(this, R.anim.animation)
-
-        stats.startAnimation(anim)
+        // запуск ValueAnimator
+        stats.startCircleAnimation()
     }
 }

@@ -1,5 +1,6 @@
 package ru.netology.nmedia.ui
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -33,19 +34,20 @@ class StatsView @JvmOverloads constructor(
         }
     }
 
-    // Paint для рисования дуг
+    // Paint для дуг
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style       = Paint.Style.STROKE
         strokeWidth = lineWidth
         strokeCap   = Paint.Cap.ROUND
     }
-    // Paint для текста в центре
+    // Paint для текста
     private val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style     = Paint.Style.FILL
         textAlign = Paint.Align.CENTER
         textSize  = fontSize
     }
 
+    // «Сырые» данные
     var data: List<Float> = emptyList()
         set(value) {
             field = value
@@ -59,6 +61,9 @@ class StatsView @JvmOverloads constructor(
     private lateinit var center: PointF
     private lateinit var oval: RectF
 
+    // Текущая угловая фаза анимации
+    private var rotationAngle = 0f
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         radius = minOf(w, h) / 2f - lineWidth / 2f
         center = PointF(w / 2f, h / 2f)
@@ -71,6 +76,9 @@ class StatsView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         if (normalized.isEmpty()) return
 
+        canvas.save()
+        canvas.rotate(rotationAngle, center.x, center.y)
+
         var startAngle = -90f
         normalized.forEachIndexed { idx, share ->
             paint.color = colors.getOrNull(idx) ?: randomColor()
@@ -79,7 +87,8 @@ class StatsView @JvmOverloads constructor(
             startAngle += sweep
         }
 
-        // Надпись с суммарным процентом
+        canvas.restore()
+
         val percent = "%.2f%%".format(normalized.sum() * 100)
         canvas.drawText(
             percent,
@@ -96,4 +105,20 @@ class StatsView @JvmOverloads constructor(
 
     private fun randomColor(): Int =
         Random.nextInt(0xFF000000.toInt(), 0xFFFFFFFF.toInt())
+
+    /**
+     * Запускает анимацию вращения круга на 360° и обратно.
+     */
+    fun startCircleAnimation() {
+        ValueAnimator.ofFloat(0f, 360f).apply {
+            duration = 1000L
+            repeatCount = 1
+            repeatMode  = ValueAnimator.REVERSE
+            addUpdateListener {
+                rotationAngle = it.animatedValue as Float
+                invalidate()
+            }
+            start()
+        }
+    }
 }
